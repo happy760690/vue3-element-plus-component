@@ -1,5 +1,5 @@
 <template>
-    <div> {{ visible }} 
+    <div>
       <choose-icon title="选择图标" v-model:visible="visible">
       选择图标
       </choose-icon>
