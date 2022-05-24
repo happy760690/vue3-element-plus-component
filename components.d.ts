@@ -16,14 +16,16 @@ declare module '@vue/runtime-core' {
     ElMain: typeof import('element-plus/es')['ElMain']
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
+    ElOption: typeof import('element-plus/es')['ElOption']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
+    ElSelect: typeof import('element-plus/es')['ElSelect']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     NavHeader: typeof import('./src/components/container/src/navHeader/index.vue')['default']
     NavSlide: typeof import('./src/components/container/src/navSlide/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Src: typeof import('./src/components/chooseIcon/src/index.vue')['default']
+    Src: typeof import('./src/components/chooseArea/src/index.vue')['default']
   }
 }
 
