@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     ElEdit: typeof import('element-plus/es')['ElEdit']
     ElHeader: typeof import('element-plus/es')['ElHeader']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElIconArrowup: typeof import('element-plus/es')['ElIconArrowup']
     ElIconEdit: typeof import('element-plus/es')['ElIconEdit']
     ElMain: typeof import('element-plus/es')['ElMain']
     ElMenu: typeof import('element-plus/es')['ElMenu']
