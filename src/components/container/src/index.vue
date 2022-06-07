@@ -23,7 +23,7 @@ let isCollapse = ref(false);
   
 <style lang="scss" scoped>
 .el-main {
-  padding: 0;
+  padding: 20px;
 }
 .el-header {
   padding: 0;
