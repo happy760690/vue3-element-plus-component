@@ -9,6 +9,7 @@ declare module '@vue/runtime-core' {
     ElBadge: typeof import('element-plus/es')['ElBadge']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElContainer: typeof import('element-plus/es')['ElContainer']
+    ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElEdit: typeof import('element-plus/es')['ElEdit']
     ElHeader: typeof import('element-plus/es')['ElHeader']
