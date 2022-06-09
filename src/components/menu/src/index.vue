@@ -74,6 +74,8 @@ console.log(props.data);
 <style lang="scss" scoped>
 svg {
   margin-right: 4px;
+  width: 1em;
+  height: 1em;
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
