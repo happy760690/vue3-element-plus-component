@@ -20,36 +20,58 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    // 键名
+    // 菜单标题的键名
+    name: {
+      tnameype: String,
+      default: "name",
+    },
+    // 菜单标识的键名
+    index: {
+      type: String,
+      default: 'index'
+    },
+    // 图标的键名
+    icon: {
+      type: String,
+      default: 'icon'
+    },
+    // 子菜单的键名
+    children: {
+      type: String,
+      default: 'children'
+    }
   },
   setup(props, ctx) {
     // 封装一个渲染无限层级菜单的方法
     // 函数会返回一个jsx代码
-    let renderMenu = (data: MenuItem[]) => {
-      return data.map((item: MenuItem) =>{
+    let renderMenu = (data: any[]) => {
+      return data.map((item: any) =>{
         // 每个菜单的图标（假如一些需要处理的属性）
-        item.i = (Icons as any)[item.icon!]
+        item.i = (Icons as any)[item[props.icon]!]
+
         // 单独处理插槽sub-menu
         let slots = {
           title: () => {
             return <>
               <item.i></item.i>
-              <span>{ item.name }</span>
+              <span>{ item[props.name] }</span>
             </>
           }
         }
         // 递归渲染children
-        if (item.children && item.children.length) {
+        if (item[props.children] && item[props.children].length) {
           return (
-            <el-sub-menu index={item.index} v-slots={slots}>
-              {renderMenu(item.children)}
+            <el-sub-menu index={item[props.index]} v-slots={slots}>
+              {renderMenu(item[props.children])}
             </el-sub-menu>
           )  
         }
         // 正常渲染普通菜单
         return (
-          <el-menu-item index={item.index}>
+          <el-menu-item index={item[props.index]}>
             <item.i></item.i>
-            <span>{ item.name }</span>
+            <span>{ item[props.name] }</span>
           </el-menu-item>
         )
 

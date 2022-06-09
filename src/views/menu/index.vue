@@ -1,7 +1,7 @@
 <template>
   <div style="width: 200px; ">
-    <m-menu :data="data1" defaultActive="1" active-text-color="red"></m-menu>
-    <!-- <m-infinite-menu :data="data2" defaultActive="1" background-color="yellow" active-text-color="red"></m-infinite-menu> -->
+    <!-- <m-menu :data="data1" defaultActive="1" active-text-color="red"></m-menu> -->
+    <m-infinite-menu :data="data2" defaultActive="1" background-color="yellow" active-text-color="red"></m-infinite-menu>
   </div>
 </template>
   
