@@ -9,8 +9,10 @@ import progress from './progress'
 import chooseTime from './chooseTime'
 import chooseDate from './chooseDate'
 import chooseCity from './chooseCity'
+import form from './form'
 
 const components = [
+  form,
   chooseArea,
   chooseIcon,
   trend,
