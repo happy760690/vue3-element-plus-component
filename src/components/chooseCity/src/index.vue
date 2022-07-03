@@ -125,8 +125,9 @@ let filterMethod = (val: string) => {
   })
 }
 
-let changeSelect = (val: City) => {
+let changeSelect = (val: Number) => {
   let allCities = Object.values(cities.value).flat(2)
+  console.log(allCities, val)
   let city = allCities.find(item => item.id === val)
   console.log(city)
   result.value = city?.name + ''
