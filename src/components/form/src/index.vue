@@ -78,7 +78,6 @@ let emits = defineEmits([
   "on-exceed",
   "before-upload",
   "before-remove",
-  "http-request",
 ]);
 
 let props = defineProps({
@@ -87,6 +86,9 @@ let props = defineProps({
     type: Array as PropType<FormOptions[]>,
     required: true,
   },
+  httpRequest: {
+    type: Function,
+  }
 });
 
 let model = ref<any>(null);
@@ -149,9 +151,6 @@ let beforeUpload = (file: UploadFile) => {
 };
 let beforeRemove = (file: UploadFile, fileList: UploadFiles) => {
     emits('before-remove', file, fileList)
-};
-let httpRequest = (options: any) => {
-    emits('http-request', options)
 };
 </script>
   

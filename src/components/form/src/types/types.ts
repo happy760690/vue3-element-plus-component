@@ -31,7 +31,7 @@ export interface FormOptions {
     action: string,
     headers?: object,
     method?: 'put' | 'post' | 'patch',
-    mutiple?: boolean,
+    multiple?: boolean,
     data?: any,
     name?: string,
     withCredentials?: boolean,
