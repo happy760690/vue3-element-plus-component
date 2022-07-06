@@ -3,7 +3,7 @@
     <m-form label-width="100px" 
     multiple
     :options="options"
-    @onChange="handleChange"
+    @on-change="handleChange"
     @onPreview="handlePreview"
     @onRemove="handleRemove"
     @beforeRemove="beforeRemove"
