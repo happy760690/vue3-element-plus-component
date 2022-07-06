@@ -1,10 +1,30 @@
 <template>
   <div>
-    <m-form label-width="100px" :options="options"></m-form>
+    <m-form label-width="100px" 
+    multiple
+    :options="options"
+    @onChange="handleChange"
+    @onPreview="handlePreview"
+    @onRemove="handleRemove"
+    @beforeRemove="beforeRemove"
+    @onExceed="handleExceed"
+    @onError="handleError"
+    @onSuccess="handleSuccess"
+    >
+      <template #uploadArea>
+        <el-button type="primary">Click to upload</el-button>
+      </template>
+      <template #uploadTip>
+        <div style="color:#ccc; font-size:12px;">
+          jpg/png files with a size less than 500kb
+        </div>
+      </template>
+    </m-form>
   </div>
 </template>
   
 <script setup lang='ts'>
+import { ElMessage, ElMessageBox, UploadProps } from "element-plus";
 import { FormOptions } from "../../components/form/src/types/types";
 let options: FormOptions[] = [
   {
@@ -125,8 +145,64 @@ let options: FormOptions[] = [
       value: 'male',
       label: '男',
     }]
+  },
+  {
+    type: 'upload',
+    label: '上传',
+    uploadAttrs: {
+      action: 'https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15',
+    },
+    rules: [{
+      required: true,
+      message: "上传不能为空",
+      trigger: 'blur',
+    }],
+    prop: 'pic',
   }
 ];
+
+const handleChange: UploadProps['onChange'] = (file, uploadFiles) => {
+  console.log('onChange');
+  console.log(file, uploadFiles);
+}
+
+const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
+  console.log('onRemove=');
+  
+  console.log(file, uploadFiles)
+}
+
+const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
+  console.log('onPreview=');
+  console.log(uploadFile)
+}
+
+const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
+  console.log('beforeRemove=');
+  console.log(uploadFile, uploadFiles)
+  return ElMessageBox.confirm(
+    `Cancel the transfert of ${uploadFile.name} ?`
+  ).then(
+    () => true,
+    () => false
+  )
+}
+const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+  console.log('onExceed=');
+  ElMessage.warning(
+    `The limit is 3, you selected ${files.length} files this time, add up to ${
+      files.length + uploadFiles.length
+    } totally`
+  )
+}
+const handleError: UploadProps['onError'] = (error, file, fileList) => {
+  console.log('onError')
+  console.log(error, file, fileList)
+}
+const handleSuccess: UploadProps['onSuccess'] = (error, file, fileList) => {
+  console.log('onSuccess')
+  console.log(error, file, fileList)
+}
 </script>
   
 <style>
