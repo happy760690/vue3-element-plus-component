@@ -1,6 +1,7 @@
 <template>
   <el-form
     v-if="model"
+    ref="form"
     v-bind="$attrs"
     :model="model"
     :rules="rules"
@@ -20,7 +21,7 @@
           v-model="model[item.prop!]"
         ></component>
         <el-upload
-          v-else
+          v-if="item.type === 'upload'"
           v-bind="item.uploadAttrs"
           :on-preview="onPreview"
           :on-remove="onRemove"
@@ -59,14 +60,17 @@
         </component>
       </el-form-item>
     </template>
+    <el-form-item>
+      <slot name="action" :form="form" :model="model"></slot>
+    </el-form-item>
   </el-form>
 </template>
   
 <script setup lang='ts'>
-import { PropType, ref, onMounted, watch } from "vue";
+import { PropType, ref, onMounted, watch, shallowRef } from "vue";
 import { FormOptions } from "./types/types";
 import cloneDeep from "lodash/cloneDeep";
-import { UploadFile, UploadFiles } from "element-plus";
+import { FormInstance, UploadFile, UploadFiles } from "element-plus";
 
 let emits = defineEmits([
   "on-preview",
@@ -88,25 +92,36 @@ let props = defineProps({
   },
   httpRequest: {
     type: Function,
-  }
+  },
 });
 
 let model = ref<any>(null);
 let rules = ref<any>(null);
+let form = ref<FormInstance | null>();
 
 // 初始化表单
 let initForm = () => {
   if (props.options && props.options.length) {
-    let m: any = {};
-    let r: any = {};
+    let m: any = {}; // 模型对象
+    let r: any = {}; // 规则对象
     props.options.map((item: FormOptions) => {
       m[item.prop!] = item.value;
       r[item.prop!] = item.rules;
+
+      // 初始化富文本
+      //   if (item.type === "editor") {
+      //     nextTick(() => {
+      //       if (document.getElementById("editor")) {
+      //         const editor = new E("#editor");
+      //         editor.create();
+      //       }
+      //     });
+      //   }
     });
 
     model.value = cloneDeep(m);
     rules.value = cloneDeep(r);
-    console.log(model.value, ":::", rules.value);
+    console.log(model.value, ":::", rules.value, '----');
   }
 };
 
@@ -126,31 +141,36 @@ watch(
 
 // 上传组件的所有方法
 let onPreview = (file: UploadFile) => {
-    emits('on-preview', file);
+  emits("on-preview", file);
 };
 let onRemove = (file: UploadFile, fileList: UploadFiles) => {
-    emits('on-remove', file, fileList);
+  emits("on-remove", file, fileList);
 };
 let onSuccess = (response: any, file: UploadFile, fileList: UploadFiles) => {
-    emits('on-success', response, file, fileList);
+  // 上传成功后给表单上传项赋值
+  let uploadItem = props.options.find((item) => item.type === "upload")!;
+  model.value[uploadItem.prop!] = { response, file, fileList };
+  emits("on-success", response, file, fileList);
 };
 let onError = (error: any, file: UploadFile) => {
-    emits('on-error', error, file);
+  emits("on-error", error, file);
 };
 let onProgress = (event: any, file: UploadFile, fileList: UploadFiles) => {
-    emits('on-progress', event, file, fileList);
+  emits("on-progress", event, file, fileList);
 };
 let onChange = (file: UploadFile, fileList: UploadFiles) => {
-    emits('on-change', file, fileList);
+  let uploadItem = props.options.find((item) => item.type === "upload")!;
+  model.value[uploadItem.prop!] = { file, fileList };
+  emits("on-change", file, fileList);
 };
 let onExceed = (file: UploadFile, fileList: UploadFiles) => {
-    emits('on-exceed', file, fileList)
+  emits("on-exceed", file, fileList);
 };
 let beforeUpload = (file: UploadFile) => {
-    emits('before-upload', file)
+  emits("before-upload", file);
 };
 let beforeRemove = (file: UploadFile, fileList: UploadFiles) => {
-    emits('before-remove', file, fileList)
+  emits("before-remove", file, fileList);
 };
 </script>
   

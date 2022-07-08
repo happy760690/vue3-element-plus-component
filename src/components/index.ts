@@ -10,8 +10,12 @@ import chooseTime from './chooseTime'
 import chooseDate from './chooseDate'
 import chooseCity from './chooseCity'
 import form from './form'
+import editor from './editor'
+import uploadFile from './uploadFile'
 
 const components = [
+  uploadFile,
+  editor,
   form,
   chooseArea,
   chooseIcon,
