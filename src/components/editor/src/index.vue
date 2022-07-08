@@ -29,26 +29,21 @@ let props = defineProps({
 })
 
 let emits = defineEmits(['update:modelValue'])
+
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef();
 const editorConfig = { placeholder: props.placeholder! };
-// 编辑器内容 HTML
-// const valueHtml = ref("");
 const toolbarConfig = {};
 const mode = "default";
-
 
 // 创建编辑器回调函数
 const handleCreated = (editor: any) => {
   editorRef.value = editor; // 记录 editor 实例，重要！
-  // editorRef.value.setHtml(`${props.modelValue}`);
 };
 
 const handleChange = (editor: IDomEditor) => {
   // editor changed
-  console.log('content', editor.getHtml())
   emits("update:modelValue", editor.getHtml())
-  // emits('changeValue', editor.getHtml())
 }
 
 // 模拟 ajax 异步获取内容
