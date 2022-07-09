@@ -11,7 +11,7 @@
     :onSuccess="handleSuccess"
   >
     <template #uploadArea>
-      <el-button type="primary">Click to upload</el-button>
+      <el-button type="primary">点击上传</el-button>
     </template>
     <template #uploadTip>
       <div style="color: #ccc; font-size: 12px">
