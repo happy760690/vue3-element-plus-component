@@ -129,6 +129,21 @@ let initForm = () => {
   }
 };
 
+// 表单验证的方法
+let validate = () => {
+  return form.value!.validate
+}
+
+// 获取表单数据
+let getFormData = () => {
+  return model.value
+}
+
+defineExpose({
+  validate,
+  getFormData,
+})
+
 onMounted(() => {
   initForm();
 });
