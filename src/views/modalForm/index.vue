@@ -1,12 +1,23 @@
 
 <template>
   <el-button type="primary" @click="open">open</el-button>
-  <m-modal-form 
+  <m-modal-form
     width="50%"
-    title="编辑用户信息" 
+    isScorll
+    title="编辑用户信息"
     v-model:visible="visible"
     :options="options"
-    >
+    :on-change="handleChange"
+    :onSuccess="handleSuccess"
+  >
+    <template #uploadArea>
+      <el-button type="primary">Click to upload</el-button>
+    </template>
+    <template #uploadTip>
+      <div style="color: #ccc; font-size: 12px">
+        jpg/png files with a size less than 500kb
+      </div>
+    </template>
     <template #footer="{ form }">
       <el-button @click="cancel">Cancel</el-button>
       <el-button type="primary" @click="confirm(form)"> 确定 </el-button>
@@ -15,8 +26,8 @@
 </template>
   
 <script setup lang='ts'>
-import { ElMessage, FormInstance } from "element-plus";
-import { ref } from "vue";
+import { ElMessage, FormInstance, UploadProps } from "element-plus";
+import { defineEmits, ref } from "vue";
 import { FormOptions } from "../../components/form/src/types/types";
 
 let visible = ref<boolean>(false);
@@ -32,7 +43,7 @@ let options: FormOptions[] = [
     prop: "username",
     label: "用户名",
     attrs: {
-      placeholder: '请输内容呀！',
+      placeholder: "请输内容呀！",
     },
     rules: [
       {
@@ -88,7 +99,7 @@ let options: FormOptions[] = [
       {
         required: true,
         message: "职位不能为空",
-        trigger: "blur",
+        trigger: "change",
       },
     ],
     children: [
@@ -118,7 +129,7 @@ let options: FormOptions[] = [
       {
         required: true,
         message: "爱好不能为空",
-        trigger: "blur",
+        trigger: "change",
       },
     ],
     children: [
@@ -148,7 +159,7 @@ let options: FormOptions[] = [
       {
         required: true,
         message: "性别不能为空",
-        trigger: "blur",
+        trigger: "change",
       },
     ],
     children: [
@@ -185,38 +196,50 @@ let options: FormOptions[] = [
   // },
   {
     type: "editor",
-    value: '<p>试试管用吗？</p>',
+    value: "<p>试试管用吗？</p>",
     label: "描述",
     prop: "desc",
     attrs: {
-      placeholder: '请输内容呀！！！！！'
+      placeholder: "请输内容呀！！！！！",
     },
-    rules: [{
-      required: true,
-      message: "描述不能为空",
-      
-    }],
+    rules: [
+      {
+        required: true,
+        message: "描述不能为空",
+      },
+    ],
   },
 ];
 
 // 点击确认
 let confirm = (form: any) => {
-  console.log(form);
   const validate = form.validate();
   // 表单验证
   validate((valid: boolean) => {
     if (valid) {
-      ElMessage.success('验证成功')
-      console.log(form.getFormData())
+      ElMessage.success("验证成功");
+      console.log(form.getFormData());
+      // const confirmData = form.getFormData()
+      // emits('confirmData', form.getFormData())
     } else {
-      ElMessage.error('验证失败')
+      ElMessage.error("验证失败");
     }
-  })
-}
+  });
+};
 // 点击取消
 let cancel = (form: FormInstance) => {
-  console.log(cancel)
-}
+  console.log(cancel);
+};
+
+const handleChange: UploadProps["onChange"] = (file, uploadFiles) => {
+  console.log("onChange");
+  console.log(file, uploadFiles);
+};
+
+const handleSuccess: UploadProps["onSuccess"] = (error, file, fileList) => {
+  console.log("onSuccess");
+  console.log(error, file, fileList);
+};
 </script>
   
 <style>
