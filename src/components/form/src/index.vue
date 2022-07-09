@@ -34,8 +34,12 @@
           :before-remove="beforeRemove"
           :http-request="httpRequest"
         >
-          <slot name="uploadArea"></slot>
-          <slot name="uploadTip"></slot>
+          <template #trigger>
+            <slot name="uploadArea"></slot>
+          </template>
+          <template #tip>
+            <slot name="uploadTip"></slot>
+          </template>
         </el-upload>
       </el-form-item>
       <!-- 有多组件构成 -->
@@ -121,7 +125,7 @@ let initForm = () => {
 
     model.value = cloneDeep(m);
     rules.value = cloneDeep(r);
-    console.log(model.value, ":::", rules.value, '----');
+    console.log(model.value, ":::", rules.value, "----");
   }
 };
 

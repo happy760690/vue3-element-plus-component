@@ -55,4 +55,7 @@ let clickAction = (item: ActionOptions, index: number) => {
 </script>
   
 <style>
+svg{
+  width: 1em;
+}
 </style>

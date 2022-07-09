@@ -12,8 +12,10 @@ import chooseCity from './chooseCity'
 import form from './form'
 import editor from './editor'
 import uploadFile from './uploadFile'
+import modalForm from './modalForm'
 
 const components = [
+  modalForm,
   uploadFile,
   editor,
   form,

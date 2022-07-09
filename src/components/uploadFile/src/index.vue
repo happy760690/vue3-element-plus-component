@@ -1,5 +1,4 @@
 <template>
-{{ value }}
   <el-upload
     v-bind="itemOptions.uploadAttrs"
     :on-preview="onPreview"
@@ -13,8 +12,12 @@
     :before-remove="beforeRemove"
     :http-request="httpRequest"
   >
-    <slot name="uploadArea"></slot>
-    <slot name="uploadTip"></slot>
+    <template #trigger>
+      <slot name="uploadArea"></slot>
+    </template>
+    <template #tip>
+      <slot name="uploadTip"></slot>
+    </template>
   </el-upload>
 </template>
   
