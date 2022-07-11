@@ -1,5 +1,6 @@
 <template>
   <el-table
+    v-bind="$attrs"
     :data="tableData"
     v-loading="isLoading"
     :element-loading-text="elementLoadingText"
@@ -66,6 +67,17 @@
       </template>
     </el-table-column>
   </el-table>
+  <div v-if="pagination" class="pagination" :style="{justifyContent: paginationAlignJustify}">
+    <el-pagination
+      v-model:currentPage="currentPage"
+      v-model:page-size="pageSize"
+      :page-sizes="pageSizes"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      @sizeChange="handleSizeChange"
+      @currentChange="handleCurrentChange"
+    />
+  </div>
 </template>
   
 <script setup lang='ts'>
@@ -117,11 +129,39 @@ let props = defineProps({
   editRowType: {
     type: String,
     default: "",
+  },
+  // 是否显示分页
+  pagination: {
+    type: Boolean,
+    default: false,
+  },
+  // 当前是第几页的数据
+  currentPage: {
+    type: Number,
+    default: 1,
+  },
+  // 每页数据选项
+  pageSizes: {
+    type: Array as PropType<Number[] >,
+    default: [10, 20, 30, 100],
+  },
+  // 当前一页多少数据
+  pageSize: {
+    type: Number,
+    default: 10,
+  },
+  total: {
+    type: Number,
+  },
+  // 分页的排列方式
+  paginationAlign: {
+    type: String as PropType<'left' | 'center' | 'right'>,
+    default: 'left',
   }
 });
 
 // 分发事件
-let emits = defineEmits(["confirm", "cancel", "update:editRowType"]);
+let emits = defineEmits(["confirm", "cancel", "update:editRowType", "sizeChange", "currentChange"]);
 // 当前点击的单元格
 let currentEdit = ref<string>("");
 
@@ -183,11 +223,26 @@ const rowClick = (row: any, column: any) => {
   }
 }
 
+// 分页的条数改变
+const handleSizeChange = (val: number) => {
+  emits('sizeChange', val)
+}
+// 分页的页数改变
+const handleCurrentChange = (val: number) => {
+  emits('currentChange', val)
+}
+
 // 过滤操作选项之后的配置
 let tableOptions = computed(() => props.options.filter((item) => !item.action));
 let actionOptions = computed(() => props.options.find((item) => item.action));
 // 表格是否在加载中
 let isLoading = computed(() => !props.data || !props.data.length);
+// 与flex结合的布局方式
+let paginationAlignJustify = computed(() => {
+  if(props.paginationAlign === 'left') return 'flex-start'
+  else if( props.paginationAlign === 'center') return 'center'
+  else return 'flex-end'
+})
 </script>
   
 <style lang="scss" scoped>
@@ -217,5 +272,11 @@ let isLoading = computed(() => !props.data || !props.data.length);
 .normal-warp {
   display: flex;
   align-items: center;
+}
+
+.pagination{
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
 }
 </style>

@@ -3,13 +3,20 @@
   <m-table
     :data="tableData"
     :options="options"
+    stripe
     isEditRow
+    pagination
     elementLoadingText="加载中..."
     elementLoadingBackground="rgba(0,0,0, .6)"
     :element-loading-svg="svg"
     element-loading-svg-view-box="-10, -10, 50, 50"
     v-model:editRowType="editRowType"
+    paginationAlign="right"
+    :total="total"
+    :currentPage="current"
     @confirm="confirm"
+    @sizeChange="sizeChange"
+    @currentChange="currentChange"
   >
     <template #date="{ scope }">
       <timer />
@@ -44,8 +51,10 @@
 </template>
   
 <script setup lang='ts'>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { TableOptions } from "../../components/table/src/type";
+import axios from 'axios'
+import '../../mock'
 
 interface TableData {
   date: string;
@@ -53,28 +62,28 @@ interface TableData {
   address: string;
 }
 
-let tableData = ref<TableData[]>([
-    {
-      date: "2016-05-03",
-      name: "Tom",
-      address: "No. 189, Grove St, Los Angeles",
-    },
-    {
-      date: "2016-05-02",
-      name: "Tom",
-      address: "No. 189, Grove St, Los Angeles",
-    },
-    {
-      date: "2016-05-04",
-      name: "Tom",
-      address: "No. 189, Grove St, Los Angeles",
-    },
-    {
-      date: "2016-05-01",
-      name: "Tom",
-      address: "No. 189, Grove St, Los Angeles",
-    },
-  ]);
+let tableData = ref<TableData[]>([]);
+
+let current = ref<number>(1)
+let pageSize = ref<number>(10)
+let total = ref<number>(0)
+
+let getData = () => {
+  axios.post('/api/list', {
+    current,
+    pageSize,
+  }).then((res: any) => {
+    const { code, data } = res.data
+    tableData.value = data.rows
+    total.value = data.total
+    console.log(data)
+  })
+}
+
+onMounted(() => {
+  getData()
+})
+
 
 let editRowType = ref<string>('')
 
@@ -128,6 +137,17 @@ const del = (scope: any) => {
 // 点击勾选
 const confirm = (scope: any) => {
   console.log('父组件', scope); 
+}
+
+const sizeChange = (val: number) => {
+  console.log('sizeChange', val);
+  pageSize.value = val
+  getData()
+}
+const currentChange = (val: number) => {
+  console.log('currentChange', val);
+  current.value = val
+  getData()
 }
 </script>
 
