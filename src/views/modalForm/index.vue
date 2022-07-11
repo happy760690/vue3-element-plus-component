@@ -228,6 +228,7 @@ let confirm = (form: any) => {
 };
 // 点击取消
 let cancel = (form: FormInstance) => {
+  visible.value = false
   console.log(cancel);
 };
 
