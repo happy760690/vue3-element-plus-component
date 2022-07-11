@@ -14,8 +14,10 @@ import editor from './editor'
 import uploadFile from './uploadFile'
 import modalForm from './modalForm'
 import table from './table'
+import calendar from './calendar'
 
 const components = [
+  calendar,
   table,
   modalForm,
   uploadFile,
