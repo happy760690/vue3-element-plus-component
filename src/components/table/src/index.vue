@@ -1,12 +1,13 @@
 <template>
   <el-table
-    :data="data"
+    :data="tableData"
     v-loading="isLoading"
     :element-loading-text="elementLoadingText"
     :element-loading-spinner="elementLoadingSpinner"
     :element-loading-svg="elementLoadingSvg"
     :element-loading-svg-view-box="elementLoadingSvgViewBox"
     :element-loading-background="elementLoadingBackground"
+    @row-click="rowClick"
   >
     <template v-for="(item, index) in tableOptions" :key="index">
       <el-table-column
@@ -16,11 +17,15 @@
         :width="item.width"
       >
         <template #default="scope">
+          <template v-if="scope.row.rowEdit">
+            <el-input size="small" v-model="scope.row[item.prop]"></el-input>
+          </template>
+          <template v-else>
           <!-- 编辑状态 -->
           <template v-if="scope.$index + scope.column.id === currentEdit">
             <div class="edit-wrap">
-              <el-input size="small" v-model="scope.row[item.prop!]"></el-input>
-              <div class="edit-action-wrap" @click="clickEditCell">
+              <el-input size="small" v-model="scope.row[item.prop]"></el-input>
+              <div class="edit-action-wrap" @click.stop="clickEditCell">
                 <slot
                   v-if="$slots.editCell"
                   :scope="scope"
@@ -37,14 +42,15 @@
           <template v-else>
             <div class="normal-warp">
               <slot v-if="item.slot" :name="item.slot" :scope="scope"></slot>
-              <span v-else>{{ scope.row[item.prop!] }}</span>
+              <span v-else>{{ scope.row[item.prop] }}</span>
               <component
                 v-if="item.editable"
                 :is="editIcon"
                 class="edit"
-                @click="clickEdit(scope)"
+                @click.stop="clickEdit(scope)"
               />
             </div>
+          </template>
           </template>
         </template>
       </el-table-column>
@@ -55,15 +61,17 @@
       :width="actionOptions?.width"
     >
       <template #default="scope">
-        <slot name="action" :scope="scope"></slot>
+        <slot v-if="scope.row.rowEdit" name="editRow"></slot>
+        <slot v-else name="action" :scope="scope"></slot>
       </template>
     </el-table-column>
   </el-table>
 </template>
   
 <script setup lang='ts'>
-import { PropType, computed, ref } from "vue";
+import { PropType, computed, ref, onMounted, watch } from "vue";
 import { TableOptions } from "./type";
+import cloneDeep from 'lodash/cloneDeep';
 
 let props = defineProps({
   // 表格的配置
@@ -100,12 +108,43 @@ let props = defineProps({
     type: String,
     default: "edit",
   },
+  // 是否可以编辑行
+  isEditRow: {
+    type: Boolean,
+    default: false,
+  },
+  // 编辑行的标识
+  editRowType: {
+    type: String,
+    default: "",
+  }
 });
 
 // 分发事件
-let emits = defineEmits(["confirm", "cancel"]);
+let emits = defineEmits(["confirm", "cancel", "update:editRowType"]);
 // 当前点击的单元格
 let currentEdit = ref<string>("");
+
+// 拷备一份表格数据
+let tableData = ref<any[]>(cloneDeep(props.data!))
+
+// 监听父组件传递过来的数据
+watch(() => props.data, (val) => {
+  tableData.value = cloneDeep(val)!
+  tableData.value.map(item => {
+    // 代表当前是否是可编辑的状态
+    item.rowEdit = false
+  })
+}, {
+  deep: true,
+})
+
+onMounted(() => {
+  tableData.value.map(item => {
+    // 代表当前是否是可编辑的状态
+    item.rowEdit = false
+  })
+})
 
 // 点击编辑图标
 const clickEdit = (scope: any) => {
@@ -126,6 +165,24 @@ const check = (scope: any) => {
 const close = (scope: any) => {
   emits("cancel", scope);
 };
+// 点击每一行的事件
+const rowClick = (row: any, column: any) => {
+  console.log(row, column);
+  // 判断当前点击的是否是操作项的内容(是否为操作列)
+  if(column.label === actionOptions!.value!.label!) {
+    // 编辑操作
+    console.log(props.editRowType)
+    if (props.isEditRow && props.editRowType === 'edit') {
+      // 表示点击的按钮是做可编辑操作
+      row.rowEdit = !row.rowEdit
+      // 重置其它数据的rowEdit属性
+      tableData.value.map(item => {
+        if (item !== row) item.rowEdit = false;
+      })
+    }
+  }
+}
+
 // 过滤操作选项之后的配置
 let tableOptions = computed(() => props.options.filter((item) => !item.action));
 let actionOptions = computed(() => props.options.find((item) => item.action));

@@ -3,10 +3,12 @@
   <m-table
     :data="tableData"
     :options="options"
+    isEditRow
     elementLoadingText="加载中..."
     elementLoadingBackground="rgba(0,0,0, .6)"
     :element-loading-svg="svg"
     element-loading-svg-view-box="-10, -10, 50, 50"
+    v-model:editRowType="editRowType"
     @confirm="confirm"
   >
     <template #date="{ scope }">
@@ -28,9 +30,13 @@
       <el-button type="primary" @click="edit(scope)" size="small"
         >编辑</el-button
       >
-      <el-button type="danger" size="small">删除</el-button>
+      <el-button type="danger" size="small" @click="del(scope)" >删除</el-button>
     </template>
     <template #editCell="{ scope }">
+      <el-button size="small" type="primary" @click="confirm(scope)">确认</el-button>
+      <el-button size="small" type="primary">取消</el-button>
+    </template>
+    <template #editRow="{ scope }">
       <el-button size="small" type="primary" @click="confirm(scope)">确认</el-button>
       <el-button size="small" type="primary">取消</el-button>
     </template>
@@ -69,31 +75,8 @@ let tableData = ref<TableData[]>([
       address: "No. 189, Grove St, Los Angeles",
     },
   ]);
-// 表格数据
-// setTimeout(() => {
-// tableData.value = [
-//   {
-//     date: "2016-05-03",
-//     name: "Tom",
-//     address: "No. 189, Grove St, Los Angeles",
-//   },
-//   {
-//     date: "2016-05-02",
-//     name: "Tom",
-//     address: "No. 189, Grove St, Los Angeles",
-//   },
-//   {
-//     date: "2016-05-04",
-//     name: "Tom",
-//     address: "No. 189, Grove St, Los Angeles",
-//   },
-//   {
-//     date: "2016-05-01",
-//     name: "Tom",
-//     address: "No. 189, Grove St, Los Angeles",
-//   },
-// ];
-// }, 3000);
+
+let editRowType = ref<string>('')
 
 const svg = `
         <path class="path" d="
@@ -128,14 +111,19 @@ let options: TableOptions[] = [
   },
   {
     label: "操作",
+    prop: '',
     align: "center",
     action: true,
   },
 ];
 
 const edit = (scope: any) => {
-  console.log(scope);
+  editRowType.value = 'edit'
 };
+
+const del = (scope: any) => {
+  editRowType.value = 'del'
+}
 
 // 点击勾选
 const confirm = (scope: any) => {
