@@ -54,7 +54,7 @@ let clickAction = (item: ActionOptions, index: number) => {
 }
 </script>
   
-<style>
+<style lang="scss" scoped>
 svg{
   width: 1em;
 }

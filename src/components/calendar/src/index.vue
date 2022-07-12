@@ -4,7 +4,7 @@
   
 <script setup lang='ts'>
 import "@fullcalendar/core/vdom"; // solves problem with Vite
-import { Calendar, EventClickArg } from "@fullCalendar/core";
+import { Calendar, EventClickArg, EventContentArg } from "@fullCalendar/core";
 import daygrid from "@fullcalendar/daygrid";
 import interaction, { DateClickArg } from "@fullcalendar/interaction";
 import { onMounted, PropType, ref, watch } from "vue";
@@ -60,10 +60,19 @@ let props = defineProps({
     type: Array as PropType<EventItem[]>,
     default: () => [],
   },
+  // 为日历添加结束时间
+  displayEventEnd: {
+    type: Boolean,
+    default: false,
+  },
+  // 自定义日历渲染内容
+  eventContent: {
+    type: Function,
+  },
 });
 
 // 分发事件
-let emits = defineEmits(['dateClick', 'eventClick'])
+let emits = defineEmits(["dateClick", "eventClick"]);
 // 日历实例
 let calendar = ref<Calendar>();
 // 渲染日历的方法
@@ -91,11 +100,13 @@ let renderCalendar = () => {
       ],
       // 点击日历上的某一天
       dateClick: (info: DateClickArg) => {
-        emits('dateClick', info);
+        emits("dateClick", info);
       },
-      eventClick(info: EventClickArg){
-        emits('eventClick', info);
-      }
+      eventClick(info: EventClickArg) {
+        emits("eventClick", info);
+      },
+      displayEventEnd: props.displayEventEnd,
+      eventContent: props.eventContent,
     });
     calendar.value.render();
   }
@@ -106,11 +117,15 @@ onMounted(() => {
 });
 
 // 监听父组件传递的事件源
-watch(() => props.events, (val) => {
-renderCalendar()
-}, {
+watch(
+  () => props.events,
+  (val) => {
+    renderCalendar();
+  },
+  {
     deep: true,
-})
+  }
+);
 </script>
   
 <style>
