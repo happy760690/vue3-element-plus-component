@@ -16,6 +16,7 @@ export default defineConfig({
     }),
     Components({
       resolvers: [ElementPlusResolver()],
+      directoryAsNamespace: true, // 提示has naming conflicts with other components, ignored.
     })
   ],
   server: {
