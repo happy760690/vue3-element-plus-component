@@ -11,7 +11,7 @@ import chooseDate from './chooseDate'
 import chooseCity from './chooseCity'
 import form from './form'
 import editor from './editor'
-import uploadFile from './uploadFile'
+// import uploadFile from './uploadFile'
 import modalForm from './modalForm'
 import table from './table'
 import calendar from './calendar'
@@ -22,7 +22,7 @@ const components = [
   calendar,
   table,
   modalForm,
-  uploadFile,
+  // uploadFile,
   editor,
   form,
   chooseArea,

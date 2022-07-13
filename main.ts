@@ -4,11 +4,13 @@ import router from './router/index'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as Icons from '@element-plus/icons-vue'
-import { toLine } from './utils'
+// import { toLine } from './utils'
 // import mUI from './components'
 import mUI from './lib/juan-element-components.es'
 import './lib/style.scss' 
-
+// 单组件引入
+// import chooseIcon from './lib/chooseIcon/index.es'
+// import './lib/chooseIcon/style.css'
 
 const app = createApp(App)
 
@@ -24,6 +26,8 @@ for(const [key, component] of Object.entries(Icons)) {
 }
 
 app.use(router)
-app.use(ElementPlus).use(mUI)
+app.use(ElementPlus)
+// .use(chooseIcon)
+.use(mUI)
 app.mount('#app')
 // createApp(App).mount('#app')
