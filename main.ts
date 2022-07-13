@@ -6,7 +6,7 @@ import 'element-plus/dist/index.css'
 import * as Icons from '@element-plus/icons-vue'
 // import { toLine } from './utils'
 // import mUI from './components'
-import mUI from './lib/juan-element-components.es'
+import mUI from './lib/index.es'
 import './lib/style.scss' 
 // 单组件引入
 // import chooseIcon from './lib/chooseIcon/index.es'

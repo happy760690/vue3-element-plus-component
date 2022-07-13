@@ -81,9 +81,25 @@ const createPackageJson = (name)=>{
     fileStr,
     'utf-8'
   )
-
 }
 
+const createInfoFile = (name) => {
+  const fileStr = `
+  // 提示使用组件库的项目，组件是一个vue插件
+  import { App } from 'vue'
+  declare const _default: {
+    install(app: App): void;
+  }
+  
+  export default _default
+  `
+  // 输出
+  fsExtra.outputFile(
+    path.resolve(outDir, `${name}/index.d.ts`),
+    fileStr,
+    'utf-8'
+  )
+}
 
 // 打包成库
 const buildLib = async () => {
@@ -100,6 +116,7 @@ const buildLib = async () => {
   for(const name of components) {
     await buildSingle(name)
     createPackageJson(name)
+    createInfoFile(name)
   }
 }
 
