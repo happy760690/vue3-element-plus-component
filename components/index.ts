@@ -15,6 +15,7 @@ import uploadFile from './uploadFile'
 import modalForm from './modalForm'
 import table from './table'
 import calendar from './calendar'
+import * as Icons from '@element-plus/icons-vue'
 
 const components = [
   calendar,
@@ -37,6 +38,12 @@ const components = [
 
 export default { 
   install(app: App) {
+    // 全局注册图标  会牺牲一点性能
+    for(const [key, component] of Object.entries(Icons)) {
+      app.component(key, component)
+      // app.component(`el-icon${toLine(key)}`, component)
+    }
+
     components.map(item => {
       app.use(item)
     })

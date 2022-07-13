@@ -37,8 +37,10 @@ const buildAll = async () => {
       rollupOptions,
       lib: {
         entry: path.resolve(entryDir, 'index.ts'),
-        name: 'juan-element-components',
-        fileName: 'juan-element-components', // 打包出来的文件名
+        name: 'index',
+        fileName: 'index',
+        // name: 'juan-element-components',
+        // fileName: 'juan-element-components', // 打包出来的文件名
         formats: ['es', 'umd'] // 输出格式
       },
       outDir,
