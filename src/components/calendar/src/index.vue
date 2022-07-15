@@ -1,132 +1,144 @@
-<template>
-  <div id="calendar"></div>
-</template>
-  
-<script setup lang='ts'>
-import "@fullcalendar/core/vdom"; // solves problem with Vite
-import { Calendar, EventClickArg, EventContentArg } from "@fullCalendar/core";
-import daygrid from "@fullcalendar/daygrid";
-import interaction, { DateClickArg } from "@fullcalendar/interaction";
-import { onMounted, PropType, ref, watch } from "vue";
-import { EventItem } from "./types";
+<script lang='ts'>
+import { defineComponent } from 'vue'
+import '@fullcalendar/core/vdom' // solve problem with Vite
+import FullCalendar, { CalendarOptions, EventApi, DateSelectArg, EventClickArg } from '@fullcalendar/vue3'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import { INITIAL_EVENTS, createEventId } from './types/event-utils'
 
-let props = defineProps({
-  // 语言
-  locale: {
-    type: String,
-    default: "zh-cn",
+const Demo = defineComponent({
+  components: {
+    FullCalendar,
   },
-  // 视图模式
-  initialView: {
-    type: String,
-    default: "dayGridMonth",
-  },
-  // 按钮文字
-  buttonText: {
-    type: Object,
-    default: () => {
-      return {
-        today: "今天",
-        month: "月",
-        week: "周",
-        day: "日",
-        prevYear: "上一年",
-        nextYear: "下一年",
-        prev: "上一月",
-        next: "下一月",
-      };
-    },
-  },
-  // 头部工具栏
-  headerToolbar: {
-    type: Object,
-    default: () => {
-      return {
-        start: "title",
-        center: "",
-        end: "prev today next",
-      };
-    },
-  },
-  // 底部工具栏
-  footerToolbar: {
-    type: Object,
-    default: () => {
-      return {};
-    },
-  },
-  // 事件源
-  events: {
-    type: Array as PropType<EventItem[]>,
-    default: () => [],
-  },
-  // 为日历添加结束时间
-  displayEventEnd: {
-    type: Boolean,
-    default: false,
-  },
-  // 自定义日历渲染内容
-  eventContent: {
-    type: Function,
-  },
-});
-
-// 分发事件
-let emits = defineEmits(["dateClick", "eventClick"]);
-// 日历实例
-let calendar = ref<Calendar>();
-// 渲染日历的方法
-let renderCalendar = () => {
-  let el = document.getElementById("calendar");
-  if (el) {
-    calendar.value = new Calendar(el, {
-      plugins: [daygrid, interaction],
-      locale: props.locale,
-      initialView: props.initialView,
-      buttonText: props.buttonText,
-      headerToolbar: props.headerToolbar,
-      footerToolbar: props.footerToolbar,
-      eventSources: [
-        {
-          // 渲染日历的事件
-          events(e, callback) {
-            if (props.events.length) {
-              callback(props.events);
-            } else {
-              callback([]);
-            }
-          },
+  data() {
+    return {
+      calendarOptions: {
+        plugins: [
+          dayGridPlugin,
+          timeGridPlugin,
+          interactionPlugin // needed for dateClick
+        ],
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-      ],
-      // 点击日历上的某一天
-      dateClick: (info: DateClickArg) => {
-        emits("dateClick", info);
-      },
-      eventClick(info: EventClickArg) {
-        emits("eventClick", info);
-      },
-      displayEventEnd: props.displayEventEnd,
-      eventContent: props.eventContent,
-    });
-    calendar.value.render();
-  }
-};
-
-onMounted(() => {
-  renderCalendar();
-});
-
-// 监听父组件传递的事件源
-watch(
-  () => props.events,
-  (val) => {
-    renderCalendar();
+        initialView: 'dayGridMonth',
+        initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
+        editable: true,
+        selectable: true,
+        selectMirror: true,
+        dayMaxEvents: true,
+        weekends: true,
+        select: this.handleDateSelect,
+        eventClick: this.handleEventClick,
+        eventsSet: this.handleEvents
+        /* you can update a remote database when these fire:
+        eventAdd:
+        eventChange:
+        eventRemove:
+        */
+      } as CalendarOptions,
+      currentEvents: [] as EventApi[],
+    }
   },
-  {
-    deep: true,
+  methods: {
+    handleWeekendsToggle() {
+      this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
+    },
+    handleDateSelect(selectInfo: DateSelectArg) {
+      let title = prompt('Please enter a new title for your event')
+      let calendarApi = selectInfo.view.calendar
+
+      calendarApi.unselect() // clear date selection
+
+      if (title) {
+        calendarApi.addEvent({
+          id: createEventId(),
+          title,
+          start: selectInfo.startStr,
+          end: selectInfo.endStr,
+          allDay: selectInfo.allDay
+        })
+      }
+    },
+    handleEventClick(clickInfo: EventClickArg) {
+      if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
+        clickInfo.event.remove()
+      }
+    },
+    handleEvents(events: EventApi[]) {
+      this.currentEvents = events
+    },
   }
-);
+})
+export default Demo
 </script>
-  
-<style>
+
+<template>
+  <div class='demo-app'>
+    <div class='demo-app-main'>
+      <FullCalendar
+        class='demo-app-calendar'
+        :options='calendarOptions'
+      >
+        <template v-slot:eventContent='arg'>
+          <b>{{ arg.timeText }}</b>
+          <i>{{ arg.event.title }}</i>
+        </template>
+      </FullCalendar>
+    </div>
+  </div>
+</template>
+
+<style lang='css'>
+
+h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+ul {
+  margin: 0;
+  padding: 0 0 0 1.5em;
+}
+
+li {
+  margin: 1.5em 0;
+  padding: 0;
+}
+
+b { /* used for event dates/times */
+  margin-right: 3px;
+}
+
+.demo-app {
+  display: flex;
+  min-height: 100%;
+  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.demo-app-sidebar {
+  width: 300px;
+  line-height: 1.5;
+  background: #eaf9ff;
+  border-right: 1px solid #d3e2e8;
+}
+
+.demo-app-sidebar-section {
+  padding: 2em;
+}
+
+.demo-app-main {
+  flex-grow: 1;
+  padding: 3em;
+}
+
+.fc { /* the calendar root */
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
 </style>

@@ -20,7 +20,7 @@
 <script setup lang='ts'>
 import "@wangeditor/editor/dist/css/style.css";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
-import { defineEmits, onMounted, ref, shallowRef } from "vue";
+import { onMounted, ref, shallowRef } from "vue";
 import { IDomEditor } from "@wangeditor/editor";
 
 let props = defineProps({

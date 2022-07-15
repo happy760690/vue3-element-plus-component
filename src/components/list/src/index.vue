@@ -28,7 +28,7 @@
 </template>
   
 <script setup lang='ts'>
-import { defineEmits, PropType } from 'vue'
+import { PropType } from 'vue'
 import { ListOptions, ActionOptions, ListItem } from './types'
 let props = defineProps({
   // 列表的内容

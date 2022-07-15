@@ -27,7 +27,7 @@
   
 <script setup lang='ts'>
 import { ElMessage, FormInstance, UploadProps } from "element-plus";
-import { defineEmits, ref } from "vue";
+import { ref } from "vue";
 import { FormOptions } from "../../components/form/src/types/types";
 
 let visible = ref<boolean>(false);
